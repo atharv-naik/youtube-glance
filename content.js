@@ -1,6 +1,6 @@
 // content.js
 
-// Inject the script into the YouTube page
+// injects script into the YouTube page
 function injectScript(src) {
   const s = document.createElement("script");
   s.src = chrome.runtime.getURL(src);
@@ -8,5 +8,6 @@ function injectScript(src) {
   (document.head || document.documentElement).append(s);
 }
 
-// Inject the settings script
-injectScript("settings.js");
+// inject scripts
+injectScript("toggle-endcards.js");
+injectScript("popup-comments.js");

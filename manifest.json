@@ -8,12 +8,12 @@
     {
       "matches": ["*://www.youtube.com/*"],
       "js": ["content.js"],
-      "run_at": "document_start"
+      "css": ["content.css"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["settings.js"],
+      "resources": ["toggle-endcards.js", "popup-comments.js"],
       "matches": ["*://www.youtube.com/*"]
     }
   ],

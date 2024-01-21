@@ -1,22 +1,23 @@
-// settings.js
+// toggle-endcards.js
 
-// Function to toggle YouTube endcards
+// toggles YouTube endcards
 function toggleEndcards(shouldHide) {
   document.querySelectorAll(".ytp-ce-element").forEach((element) => {
     element.style.display = shouldHide ? "none" : "unset";
   });
 }
 
-// Function to add the toggle option to YouTube player settings
+// adds toggle option to YouTube player settings
 function addToggleOption() {
-  // Check if the settings menu is available
+  // check if the settings menu is available
   const settingsMenu = document.querySelector(".ytp-panel-menu");
-  if (settingsMenu === null || settingsMenu === undefined) {
-    // If not, try again in 1 second
+
+  if (settingsMenu === null) {
+    // if not, try again in 1 second
     return setTimeout(addToggleOption, 1000);
   }
 
-  // Create the new option element
+  // create a new menu item for the toggle option
   const toggleOption = document.createElement("div");
   toggleOption.className = "ytp-menuitem";
   toggleOption.role = "menuitemcheckbox";
@@ -35,19 +36,19 @@ function addToggleOption() {
     </div>
     `;
 
-  // Add a click event listener to toggle endcards when clicked
+  // listen for click events on the toggle option
   toggleOption.addEventListener("click", function () {
     const isChecked = true ? toggleOption.ariaChecked === "false" : true;
     toggleEndcards(isChecked);
     toggleOption.ariaChecked = isChecked;
   });
 
-  // Append the new option to the settings menu
+  // appends the toggle option to the settings menu
   settingsMenu.appendChild(toggleOption);
 }
 
-// Wait for the YouTube page to fully load
+// wait for the page to load
 window.addEventListener("load", function () {
-  //   // Inject the script into the YouTube page
+  // add the toggle option to the YouTube player settings
   setTimeout(addToggleOption, 1000);
 });
