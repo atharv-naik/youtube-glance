@@ -13,7 +13,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["toggle-endcards.js", "popup-comments.js"],
+      "resources": ["toggle-endcards.js", "popup-comments.js", "snap-comments.js"],
       "matches": ["*://www.youtube.com/*"]
     }
   ],

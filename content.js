@@ -11,3 +11,4 @@ function injectScript(src) {
 // inject scripts
 injectScript("toggle-endcards.js");
 injectScript("popup-comments.js");
+injectScript("snap-comments.js");
