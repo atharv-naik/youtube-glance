@@ -18,6 +18,7 @@ popupStylesDict = {
   scrollbarWidth: "none",
   "-msOverflowStyle": "none",
   backgroundColor: "#181818d9",
+  color: "white",
 };
 
 // initial styles of original comments
@@ -121,10 +122,33 @@ function toggleCommentsPopup() {
   }
 }
 
+var theme = "dark";
+
 // wait for page load
 window.addEventListener("load", () => {
-  // add comments popup button
-  initializeCommentsPopupButton();
+  // fetch manifest file
+  fetch(`${window.location.origin}/manifest.webmanifest`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.background_color === "#FFFFFF") {
+        theme = "light";
+      } else {
+        theme = "dark";
+      }
+      return theme;
+    })
+    .then((theme) => {
+      // set background color based on theme
+      if (theme === "light") {
+        popupStylesDict["backgroundColor"] = "#FFFFFF";
+        popupStylesDict["color"] = "black";
+      } else {
+        popupStylesDict["backgroundColor"] = "#181818d9";
+        popupStylesDict["color"] = "white";
+      }
+      // add comments popup button
+      initializeCommentsPopupButton();
+    });
 });
 
 document.addEventListener("keydown", function (event) {
