@@ -122,9 +122,13 @@ window.addEventListener("load", () => {
   initializeCommentsPopupButton();
 });
 
-// alt + c to toggle comments popup
 document.addEventListener("keydown", function (event) {
+  // alt + c to toggle comments popup
   if (event.altKey && event.key.toLowerCase() === "c") {
+    toggleCommentsPopup();
+  }
+  // option + c to toggle comments popup on mac
+  if (event.metaKey && event.key.toLowerCase() === "c") {
     toggleCommentsPopup();
   }
 });
