@@ -70,6 +70,11 @@ function showCommentsPopup(commentsPopupDiv, popupStylesDict) {
 
   // Append the wrapper to the player
   moviePlayer.appendChild(commentsPopupDiv);
+
+  // prevent player shortcuts while typing
+  commentsPopupDiv.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+  });
 }
 
 // function to dismiss popup comments and return to normal comments
