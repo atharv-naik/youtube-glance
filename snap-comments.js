@@ -1,14 +1,14 @@
 var backupStylesDict = {};
 var snapped = false;
-const html5VideoContainer = document.querySelector(".html5-video-container");
-const videoPlayer = document.querySelector(".video-stream.html5-main-video");
+var html5VideoContainer = document.querySelector(".html5-video-container");
+var videoPlayer = document.querySelector(".video-stream.html5-main-video");
 const snapDiv = document.createElement("div");
 
 
 function initSnap() {
   snapDiv.id = "snap-div";
   html5VideoContainer.appendChild(snapDiv);
-  
+
   snapDiv.style.height = "100%";
   snapDiv.style.minWidth = "30vw";
   snapDiv.style.zIndex = "70";
@@ -30,6 +30,9 @@ function snapCommentsBesidePlayer(animate = true, force = false) {
   if (snapped && !force) {
     return;
   }
+
+  html5VideoContainer = document.querySelector(".html5-video-container");
+  videoPlayer = document.querySelector(".video-stream.html5-main-video");
 
   // append a div to html5-video-container to snap comments to the right
 
@@ -110,12 +113,15 @@ function snapCommentsBesidePlayer(animate = true, force = false) {
     commentsSnap.style.color = "white";
   }
 
-  // append to html5-video-container
+  // append to snap div
   snapDiv.appendChild(commentsSnap);
 
   // add event listener to prevent click events from bubbling up; this prevents the video from pausing when clicking on the comments
   commentsSnap.addEventListener("click", preventBubbleUp);
   commentsSnap.addEventListener("keydown", preventBubbleUp);
+
+  // unsnap when video ends
+  videoPlayer.addEventListener("ended", unsnapComments);
 
   snapped = true;
 }
@@ -210,11 +216,12 @@ function doUnsnap(transition = false) {
   // remove class
   commentsSnap.classList.remove("ytp-snap-comments");
 
+  videoPlayer.removeEventListener("ended", unsnapComments);
+
   if (!transition) snapped = false; // only set snapped to false if not transitioning
 }
 
-// unsnap when video ends
-videoPlayer.addEventListener("ended", unsnapComments);
+
 
 document.addEventListener("keydown", function (event) {
   // shift + s to snap comments beside player

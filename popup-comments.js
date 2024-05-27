@@ -45,6 +45,7 @@ function initializeCommentsPopupButton() {
   const rightControls = document.querySelector(".ytp-right-controls");
   if (rightControls === null) {
     setTimeout(initializeCommentsPopupButton, 500);
+    return;
   }
   rightControls.insertBefore(commentsPopupButton, rightControls.firstChild);
 
