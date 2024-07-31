@@ -1,5 +1,3 @@
-// initSnap();
-
 // snaps the watch-next-bar beside the player
 function snapWatchNextBar(animate = true, force = false) {
   // skip if snapped
@@ -7,15 +5,11 @@ function snapWatchNextBar(animate = true, force = false) {
     return;
   }
 
-  // append a div to html5-video-container to snap chapters to the right
-
   if (html5VideoContainer === null || videoPlayer === null) {
     setInterval(snapWatchNextBar(), 500);
     return;
   }
 
-  // style
-  // save the original styles; backupStylesDict["html5VideoContainer"] = html5VideoContainer.style;
   backupStylesDict["html5VideoContainer"] = {};
   for (var key in html5VideoContainer.style) {
     backupStylesDict["html5VideoContainer"][key] =
@@ -25,8 +19,7 @@ function snapWatchNextBar(animate = true, force = false) {
   html5VideoContainer.style.alignItems = "center";
   html5VideoContainer.style.height = "100%";
 
-  // style
-  // save the original styles; backupStylesDict["videoPlayer"] = videoPlayer.style;
+
   backupStylesDict["videoPlayer"] = {};
   for (var key in videoPlayer.style) {
     backupStylesDict["videoPlayer"][key] = videoPlayer.style[key];
@@ -36,8 +29,6 @@ function snapWatchNextBar(animate = true, force = false) {
   videoPlayer.style.position = "initial";
 
   if (animate) {
-    // snap animation
-    // animate video player min width from current to 68vw
     videoPlayer.animate(
       [
         {
@@ -50,7 +41,6 @@ function snapWatchNextBar(animate = true, force = false) {
       {
         duration: 250,
         fill: "forwards",
-        // easing: fast start and slow end
         easing: "cubic-bezier(0.4, 0.0, 0.2, 1)",
       }
     );
@@ -79,22 +69,16 @@ function snapWatchNextBar(animate = true, force = false) {
   watchNextSnap.style["-msOverflowStyle"] = "none";
   watchNextSnap.style.display = "block";
 
-  // set background color based on theme
   if (theme === "light") {
-    // watchNextSnap.style.backgroundColor = "#ccc";
     watchNextSnap.style.color = "black";
   } else {
-    // watchNextSnap.style.backgroundColor = "#181818";
     watchNextSnap.style.color = "white";
   }
 
   snapDiv.style.backgroundColor = "transparent";
 
-
-  // append to snap div
   snapDiv.appendChild(watchNextSnap);
 
-  // add event listener to prevent click events from bubbling up; this prevents the video from pausing when clicking on the snap
   watchNextSnap.addEventListener("click", preventBubbleUp);
   watchNextSnap.addEventListener("keydown", preventBubbleUp);
   watchNextSnap.addEventListener("dblclick", preventBubbleUp);
@@ -128,17 +112,12 @@ function unsnapWatchNextBar(animate = true, transition = false) {
       {
         duration: 250,
         fill: "forwards",
-        // easing: fast start and slow end
         easing: "cubic-bezier(0.4, 0.0, 0.2, 1)",
       }
     );
 
     animation.finished.then(() => {
-      // remove animation
       animation.cancel();
-
-      // unsnap watch-next-bar ///////////////
-
       doUnsnapWatchNextBar((transition = transition));
     });
   }
@@ -150,10 +129,8 @@ function doUnsnapWatchNextBar(transition = false) {
   const parent = document.querySelector("#related > ytd-watch-next-secondary-results-renderer");
   const sibling = document.querySelector("#related > ytd-watch-next-secondary-results-renderer > #continuations");
 
-  // insert watch-next-bar back to its original position
   parent.insertBefore(watchNextSnap, sibling);
 
-  // remove event listeners for prevent-bubble-up
   watchNextSnap.removeEventListener("click", preventBubbleUp);
   watchNextSnap.removeEventListener("keydown", preventBubbleUp);
 
@@ -164,21 +141,12 @@ function doUnsnapWatchNextBar(transition = false) {
     html5VideoContainer.style[key] =
       backupStylesDict["html5VideoContainer"][key];
   }
-
-  // style
   for (var key in backupStylesDict["videoPlayer"]) {
     videoPlayer.style[key] = backupStylesDict["videoPlayer"][key];
   }
-
-  // style
   for (var key in backupStylesDict["watchNextSnap"]) {
     watchNextSnap.style[key] = backupStylesDict["watchNextSnap"][key];
   }
-
-
-  // remove class
-  // watchNextSnap.classList.remove("ytp-snap-watch-next-bar");
-
 
   videoPlayer.removeEventListener("ended", unsnapWatchNextBar);
 
@@ -186,20 +154,13 @@ function doUnsnapWatchNextBar(transition = false) {
   if (!transition) snapped = false; // only set snapped to false if not transitioning
 }
 
-
-
-
-
 document.addEventListener("keydown", function (event) {
-    // shift + c to snap watch-next-bar beside player
     if (event.shiftKey && event.key.toLowerCase() === "c") {
       snapWatchNextBar();
     }
-    // shift + e to unsnap watch-next-bar
     if (event.shiftKey && event.key.toLowerCase() === "e") {
       unsnapWatchNextBar();
     }
-
     if (event.key.toLowerCase() === "f" || event.key.toLowerCase() === "t") {
       unsnapWatchNextBar((animate = false));
     }

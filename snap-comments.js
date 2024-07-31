@@ -1,239 +1,190 @@
-var backupStylesDict = {};
-var snapped = false;
-var html5VideoContainer = document.querySelector(".html5-video-container");
-var videoPlayer = document.querySelector(".video-stream.html5-main-video");
-const snapDiv = document.createElement("div");
+const backupStylesDict = {};
+let snapped = false;
+const snapDiv = createSnapDiv();
+let html5VideoContainer;
+let videoPlayer;
 
 
-function initSnap() {
-  snapDiv.id = "snap-div";
-  html5VideoContainer.appendChild(snapDiv);
-
-  snapDiv.style.height = "100%";
-  snapDiv.style.minWidth = "30vw";
-  snapDiv.style.zIndex = "70";
-  snapDiv.style.overflowX = "hidden";
-  snapDiv.style.overflowY = "scroll";
-  snapDiv.style.scrollbarWidth = "none";
-  snapDiv.style["-msOverflowStyle"] = "none";
-  snapDiv.style.display = "flex";
-  snapDiv.style.flexDirection = "column";
-  snapDiv.style.alignItems = "center";
-  snapDiv.style.justifyContent = "center";
+function createSnapDiv() {
+  const div = document.createElement("div");
+  div.id = "snap-div";
+  div.style.height = "100%";
+  div.style.minWidth = "30vw";
+  div.style.zIndex = "70";
+  div.style.overflowX = "hidden";
+  div.style.overflowY = "scroll";
+  div.style.scrollbarWidth = "none";
+  div.style.msOverflowStyle = "none";
+  div.style.display = "flex";
+  div.style.flexDirection = "column";
+  div.style.alignItems = "center";
+  div.style.justifyContent = "center";
+  return div;
 }
 
-initSnap();
+function initSnap() {
+  waitForElements([".html5-video-container", ".video-stream.html5-main-video"], () => {
+    html5VideoContainer.appendChild(snapDiv);
+  });
+}
 
-// snaps the comments beside the player
-function snapCommentsBesidePlayer(animate = true, force = false) {
-  // skip if snapped
-  if (snapped && !force) {
-    return;
+function waitForElements(selectors, callback) {
+  const elements = selectors.map(selector => document.querySelector(selector));
+  if (elements.every(el => el !== null)) {
+    [html5VideoContainer, videoPlayer] = elements;
+    callback();
+  } else {
+    setTimeout(() => waitForElements(selectors, callback), 500);
   }
+}
 
-  html5VideoContainer = document.querySelector(".html5-video-container");
-  videoPlayer = document.querySelector(".video-stream.html5-main-video");
-
-  // append a div to html5-video-container to snap comments to the right
-
-  if (html5VideoContainer === null || videoPlayer === null) {
-    setInterval(snapCommentsBesidePlayer(), 500);
-    return;
+function saveOriginalStyles(element, backupKey) {
+  backupStylesDict[backupKey] = {};
+  for (let key in element.style) {
+    backupStylesDict[backupKey][key] = element.style[key];
   }
+}
 
-  // style
-  // save the original styles; backupStylesDict["html5VideoContainer"] = html5VideoContainer.style;
-  backupStylesDict["html5VideoContainer"] = {};
-  for (var key in html5VideoContainer.style) {
-    backupStylesDict["html5VideoContainer"][key] =
-      html5VideoContainer.style[key];
-  }
+function applySnapStyles() {
+  saveOriginalStyles(html5VideoContainer, "html5VideoContainer");
   html5VideoContainer.style.display = "flex";
   html5VideoContainer.style.alignItems = "center";
   html5VideoContainer.style.height = "100%";
 
-  // style
-  // save the original styles; backupStylesDict["videoPlayer"] = videoPlayer.style;
-  backupStylesDict["videoPlayer"] = {};
-  for (var key in videoPlayer.style) {
-    backupStylesDict["videoPlayer"][key] = videoPlayer.style[key];
-  }
+  saveOriginalStyles(videoPlayer, "videoPlayer");
   videoPlayer.style.height = "auto";
   videoPlayer.style.maxWidth = "80vw";
-  // videoPlayer.style.minWidth = "68vw";
   videoPlayer.style.position = "initial";
+}
 
-  if (animate) {
-    // snap animation
-    // animate video player min width from current to 68vw
-    videoPlayer.animate(
-      [
+function snapCommentsBesidePlayer(animate = true, force = false) {
+  if (snapped && !force) {
+    return;
+  }
+
+  waitForElements([".html5-video-container", ".video-stream.html5-main-video"], () => {
+    applySnapStyles();
+
+    if (animate) {
+      videoPlayer.animate(
+        [
+          { minWidth: "100vw" },
+          { minWidth: "68vw" },
+        ],
         {
-          minWidth: "100vw",
-        },
-        {
-          minWidth: "68vw",
-        },
-      ],
-      {
-        duration: 250,
-        fill: "forwards",
-        // easing: fast start and slow end
-        easing: "cubic-bezier(0.4, 0.0, 0.2, 1)",
-      }
-    );
-  }
+          duration: 250,
+          fill: "forwards",
+          easing: "cubic-bezier(0.4, 0.0, 0.2, 1)",
+        }
+      );
+    }
 
+    const commentsSnap = document.querySelector("#comments");
+    commentsSnap.className = "ytp-snap-comments";
 
-  const commentsSnap = document.querySelector("#comments");
-  commentsSnap.className = "ytp-snap-comments";
+    saveOriginalStyles(commentsSnap, "commentsSnap");
+    commentsSnap.style.height = "calc(100% - 120px)";
+    commentsSnap.style.zIndex = "70";
+    commentsSnap.style.overflowX = "hidden";
+    commentsSnap.style.overflowY = "auto";
+    commentsSnap.style.scrollbarWidth = "none";
+    commentsSnap.style.msOverflowStyle = "none";
+    commentsSnap.style.paddingInline = "2rem";
 
-  // style
-  // save the original styles
-  backupStylesDict["commentsSnap"] = {};
-  for (var key in snapDiv.style) {
-    backupStylesDict["commentsSnap"][key] = commentsSnap.style[key];
-  }
-  commentsSnap.style.height = "calc(100% - 120px)";
-  commentsSnap.style.zIndex = "70";
-  commentsSnap.style.overflowX = "hidden";
-  commentsSnap.style.overflowY = "auto";
-  commentsSnap.style.scrollbarWidth = "none";
-  commentsSnap.style["-msOverflowStyle"] = "none";
-  commentsSnap.style.paddingInline = "2rem";
+    applyThemeStyles(commentsSnap);
 
-  // set background color based on theme
-  if (theme === "light") {
-    snapDiv.style.backgroundColor = "#FFFFFF";
-    commentsSnap.style.backgroundColor = "#FFFFFF";
-    commentsSnap.style.color = "black";
-  } else {
-    snapDiv.style.backgroundColor = "#181818";
-    commentsSnap.style.backgroundColor = "#181818";
-    commentsSnap.style.color = "white";
-  }
+    snapDiv.appendChild(commentsSnap);
+    commentsSnap.addEventListener("click", preventBubbleUp);
+    commentsSnap.addEventListener("keydown", preventBubbleUp);
+    videoPlayer.addEventListener("ended", unsnapComments);
 
-  // append to snap div
-  snapDiv.appendChild(commentsSnap);
+    snapped = true;
+  });
+}
 
-  // add event listener to prevent click events from bubbling up; this prevents the video from pausing when clicking on the comments
-  commentsSnap.addEventListener("click", preventBubbleUp);
-  commentsSnap.addEventListener("keydown", preventBubbleUp);
+function applyThemeStyles(commentsSnap) {
+  const isLightTheme = theme === "light";
+  const backgroundColor = isLightTheme ? "#FFFFFF" : "#181818";
+  const color = isLightTheme ? "black" : "white";
 
-  // unsnap when video ends
-  videoPlayer.addEventListener("ended", unsnapComments);
-
-  snapped = true;
+  snapDiv.style.backgroundColor = backgroundColor;
+  commentsSnap.style.backgroundColor = backgroundColor;
+  commentsSnap.style.color = color;
 }
 
 function preventBubbleUp(event) {
-  // before stopping propagation, check if the click is on a timestamp link
   if (event.target.tagName === "A") {
-    // skip to the timestamp preventing the video from pausing
-    let text = event.target.innerText; // of the form "0:00"
-    let time = text.split(":");
-    let seconds = parseInt(time[0]) * 60 + parseInt(time[1]);
-    videoPlayer.currentTime = seconds;
-
-    // prevent the link from opening
     event.preventDefault();
+    const time = event.target.innerText.split(":").map(Number);
+    videoPlayer.currentTime = time[0] * 60 + time[1];
   }
 
-  // stop propagation
   event.stopPropagation();
 }
 
-// undo snapping of comments
 function unsnapComments(animate = true, transition = false) {
-  // skip if not snapped
   if (!snapped) {
     return;
   }
 
   if (!animate || transition) {
-    doUnsnap();
-    return;
+    doUnsnap(transition);
   } else {
-    // animate video player min width from 68vw to 100vw
-    var animation = videoPlayer.animate(
+    const animation = videoPlayer.animate(
       [
-        {
-          minWidth: "68vw",
-        },
-        {
-          minWidth: "100vw",
-        },
+        { minWidth: "68vw" },
+        { minWidth: "100vw" },
       ],
       {
         duration: 250,
         fill: "forwards",
-        // easing: fast start and slow end
         easing: "cubic-bezier(0.4, 0.0, 0.2, 1)",
       }
     );
 
     animation.finished.then(() => {
-      // remove animation
       animation.cancel();
-
-      // unsnap comments ///////////////
-
-      doUnsnap((transition = transition));
+      doUnsnap(transition);
     });
   }
 }
 
 function doUnsnap(transition = false) {
-  // find the snap div
   const commentsSnap = document.querySelector(".ytp-snap-comments");
   const below = document.querySelector("#below");
 
-  // append comments to below
   below.appendChild(commentsSnap);
 
-  // remove event listeners for prevent-bubble-up
   commentsSnap.removeEventListener("click", preventBubbleUp);
   commentsSnap.removeEventListener("keydown", preventBubbleUp);
 
-  // restore original styles
+  restoreOriginalStyles(html5VideoContainer, "html5VideoContainer");
+  restoreOriginalStyles(videoPlayer, "videoPlayer");
+  restoreOriginalStyles(commentsSnap, "commentsSnap");
 
-  // style
-  for (var key in backupStylesDict["html5VideoContainer"]) {
-    html5VideoContainer.style[key] =
-      backupStylesDict["html5VideoContainer"][key];
-  }
-
-  // style
-  for (var key in backupStylesDict["videoPlayer"]) {
-    videoPlayer.style[key] = backupStylesDict["videoPlayer"][key];
-  }
-
-  // style
-  for (var key in backupStylesDict["commentsSnap"]) {
-    commentsSnap.style[key] = backupStylesDict["commentsSnap"][key];
-  }
-
-  // remove class
   commentsSnap.classList.remove("ytp-snap-comments");
-
   videoPlayer.removeEventListener("ended", unsnapComments);
 
-  if (!transition) snapped = false; // only set snapped to false if not transitioning
+  if (!transition) {
+    snapped = false;
+  }
 }
 
+function restoreOriginalStyles(element, backupKey) {
+  for (let key in backupStylesDict[backupKey]) {
+    element.style[key] = backupStylesDict[backupKey][key];
+  }
+}
 
-
-document.addEventListener("keydown", function (event) {
-  // shift + s to snap comments beside player
-  if (event.shiftKey && event.key.toLowerCase() === "s") {
+document.addEventListener("keydown", (event) => {
+  const key = event.key.toLowerCase();
+  if (event.shiftKey && key === "s") {
     snapCommentsBesidePlayer();
-  }
-  // shift + d to unsnap comments
-  if (event.shiftKey && event.key.toLowerCase() === "d") {
+  } else if (event.shiftKey && key === "d") {
     unsnapComments();
-  }
-
-  if (event.key.toLowerCase() === "f" || event.key.toLowerCase() === "t") {
-    unsnapComments((animate = false));
+  } else if (key === "f" || key === "t") {
+    unsnapComments(false);
   }
 });
+
+initSnap();

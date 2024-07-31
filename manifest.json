@@ -10,20 +10,14 @@
   "content_scripts": [
     {
       "matches": ["*://www.youtube.com/*"],
-      "js": ["content.js"],
-      "css": ["content.css"]
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
+      "js": [
+        "content.js",
         "toggle-endcards.js", 
         "popup-comments.js", 
         "snap-comments.js", 
         "snap-chapters.js",
         "snap-watch-next-bar.js"
-      ],
-      "matches": ["*://www.youtube.com/*"]
+      ]
     }
   ],
   "icons": {
