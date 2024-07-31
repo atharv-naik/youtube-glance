@@ -155,7 +155,7 @@ function doUnsnapWatchNextBar(transition = false) {
 }
 
 document.addEventListener("keydown", function (event) {
-    if (event.shiftKey && event.key.toLowerCase() === "c") {
+    if (event.shiftKey && event.key.toLowerCase() === "w") {
       snapWatchNextBar();
     }
     if (event.shiftKey && event.key.toLowerCase() === "e") {

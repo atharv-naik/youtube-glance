@@ -53,7 +53,11 @@ function initializeCommentsPopupButton() {
   });
 }
 
-function showCommentsPopup(commentsPopupDiv, popupStylesDict) {
+async function showCommentsPopup(commentsPopupDiv, popupStylesDict) {
+  if (snapped) {
+    unsnapComments(false);
+  }
+
   for (const key in popupStylesDict) {
     initialStylesDict[key] = commentsPopupDiv.style[key];
     commentsPopupDiv.style[key] = popupStylesDict[key];

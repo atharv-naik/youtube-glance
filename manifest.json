@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Endcard Toggle",
+  "name": "YTSnap",
   "version": "1.0",
-  "description": "Toggle YouTube endcards on/off",
+  "description": "Engage with the comments and watch next recommendations without scrolling down the page.",
   "permissions": [
     "activeTab",
     "storage"
@@ -11,16 +11,14 @@
     {
       "matches": ["*://www.youtube.com/*"],
       "js": [
-        "content.js",
-        "toggle-endcards.js", 
-        "popup-comments.js", 
-        "snap-comments.js", 
-        "snap-chapters.js",
-        "snap-watch-next-bar.js"
+        "content_scripts/popup-comments.js",
+        "content_scripts/snap-comments.js",
+        "content_scripts/snap-watch-next-bar.js",
+        "content_scripts/toggle-endcards.js"
       ]
     }
   ],
   "icons": {
-    "48": "icon.png"
+    "48": "icons/icon.png"
   }
 }
