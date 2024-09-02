@@ -1,6 +1,6 @@
-# YTSnap: YouTube Video Player Chrome Extension
+# YouTube-Glance
 
-Snap YouTube comments or watch next recommendations right next to the video player. Engage with the comments and watch next recommendations without scrolling down the page.
+Glance at YouTube comments or watch next recommendations right next to the video player. Engage with the comments and watch next recommendations without scrolling down the page.
 
 Works in full screen and theater modes.
 
